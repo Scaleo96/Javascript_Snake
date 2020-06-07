@@ -1,0 +1,31 @@
+.grid-container{
+  display: grid;
+  width:  min-content;
+  grid-template-columns: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
+  grid-template-rows: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
+  background-color: grey;
+  padding: 10px;
+}
+
+.grid-item{
+  height: 25px;
+  width: 25px;
+  background-color: black;
+  border: 1px solid white;
+  padding: : 20px;
+  visibility:  visible;
+}
+
+.box-selected{
+  background-color: white;
+}
+
+.lost{
+  background-color: red;
+}
+
+.score{
+    display: grid;
+    width:  min-content;
+    grid-template-columns: auto auto;
+}
