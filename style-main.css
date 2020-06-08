@@ -1,8 +1,6 @@
 .grid-container{
   display: grid;
   width:  min-content;
-  grid-template-columns: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
-  grid-template-rows: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
   background-color: grey;
   padding: 10px;
 }

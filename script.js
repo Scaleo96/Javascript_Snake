@@ -1,10 +1,11 @@
 const GRID = document.querySelector(".grid-container");
-const SQUARES = document.querySelectorAll(".grid-item");
 const SCORE = document.querySelectorAll("h3");
-const RESET = document.querySelector("button");
+const BUTTONS = document.querySelectorAll("button");
+const INPUT = document.querySelector("input");
 
-var rowsandcolums = Math.sqrt(SQUARES.length);
-var headPos = [[Math.floor(rowsandcolums/2), Math.floor(rowsandcolums/2)]];
+var squares = [];
+var rowsandcolums;
+var headPos;
 var pointPos = [0, 0];
 
 var points = 0;
@@ -12,38 +13,39 @@ var points = 0;
 var dir = "";
 var interval;
 var gameOn = false;
+var gameReady = false;
 var addBody = false;
 
-SQUARES[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
-
 function changeDirection(e){
-  if (e.key == "w" || e.code == 38){
-    if (dir == "down"){
-      loseGame();
-    }
+  if (gameReady){
+    if (e.key == "w" || e.code == "ArrowUp"){
+      if (dir == "down"){
+        loseGame();
+      }
 
-    dir = "up";
-  }
-  else if (e.key == "a" || e.code === 37){
-    if (dir == "right"){
-      loseGame();
+      dir = "up";
     }
+    else if (e.key == "a" || e.code === "ArrowLeft"){
+      if (dir == "right"){
+        loseGame();
+      }
 
-    dir = "left";
-  }
-  else if (e.key == "d" || e.code == 39){
-    if (dir == "left"){
-      loseGame();
+      dir = "left";
     }
+    else if (e.key == "d" || e.code == "ArrowRight"){
+      if (dir == "left"){
+        loseGame();
+      }
 
-    dir = "right";
-  }
-  else if (e.key == "s" || e.code == 40){
-    if (dir == "up"){
-      loseGame();
+      dir = "right";
     }
+    else if (e.key == "s" || e.code == "ArrowDown"){
+      if (dir == "up"){
+        loseGame();
+      }
 
-    dir = "down";
+      dir = "down";
+    }
   }
 }
 
@@ -111,9 +113,9 @@ function moveSnake(){
 
 function changeGrid(lastPoint, addBody){
   if (!addBody){
-  SQUARES[lastPoint[0]*rowsandcolums + lastPoint[1]].classList.remove("box-selected");
+  squares[lastPoint[0]*rowsandcolums + lastPoint[1]].classList.remove("box-selected");
   }
-  SQUARES[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
+  squares[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
 }
 
 function randomPoint(removedPoint){
@@ -137,7 +139,7 @@ function randomPoint(removedPoint){
   }
 
   pointPos = randomPoint;
-  SQUARES[randomPoint[0]*rowsandcolums + randomPoint[1]].classList.add("box-selected");
+  squares[randomPoint[0]*rowsandcolums + randomPoint[1]].classList.add("box-selected");
 }
 
 function loseGame(){
@@ -146,11 +148,14 @@ function loseGame(){
   console.log("lost");
 }
 
-function start(){
-  if (!gameOn){
-    interval = setInterval(moveSnake, 200);
-    randomPoint(headPos[0]);
-    gameOn = true;
+function start(e){
+  if (!gameOn && gameReady){
+    if (e.key == "w" || e.code == "ArrowUp" || e.key == "a" || e.code === "ArrowLeft"
+        || e.key == "d" || e.code == "ArrowRight" || e.key == "s" || e.code == "ArrowDown"){
+          interval = setInterval(moveSnake, 200);
+          randomPoint(headPos[0]);
+          gameOn = true;
+    }
   }
 }
 
@@ -165,14 +170,49 @@ function reset(){
   gameOn = false;
   addBody = false;
 
-  for (let i = 0; i < SQUARES.length; i++){
-    SQUARES[i].classList.remove("box-selected");
+  for (let i = 0; i < squares.length; i++){
+    squares[i].classList.remove("box-selected");
   }
 
-  SQUARES[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
+  squares[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
   GRID.classList.remove("lost");
+}
+
+function clearGrid(){
+  if (squares.length > 1){
+    for (let i = 0; i < squares.length; i++){
+      GRID.removeChild(squares[i]);
+    }
+  }
+}
+
+function spawnGrid(){
+  clearGrid();
+
+  var gridSize = "";
+  for (let i = 0; i < INPUT.value; i++){
+      for (let j = 0; j < INPUT.value; j++){
+        let box = document.createElement("div");
+        box.classList.add("grid-item");
+        GRID.appendChild(box);
+      }
+    gridSize += " 30px";
+    console.log("test");
+  }
+  console.log(gridSize);
+
+  GRID.style.cssText = "grid-template-columns:" + gridSize + "; grid-template-rows:" + gridSize + ";";
+
+  squares = document.querySelectorAll(".grid-item");
+  rowsandcolums = INPUT.value;
+  console.log(rowsandcolums);
+  headPos = [[Math.floor(rowsandcolums/2), Math.floor(rowsandcolums/2)]];
+  console.log(headPos);
+  squares[headPos[0][0]*rowsandcolums + headPos[0][1]].classList.add("box-selected");
+  gameReady = true;
 }
 
 document.addEventListener("keyup", start, false);
 document.addEventListener("keydown", changeDirection, false);
-RESET.addEventListener('click', reset, false);
+BUTTONS[0].addEventListener('click', reset, false);
+BUTTONS[1].addEventListener('click', spawnGrid, false);
